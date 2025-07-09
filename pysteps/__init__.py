@@ -1,3 +1,5 @@
+print("*** Running from local ~/pysteps clone! ***")
+
 import json
 import os
 import stat

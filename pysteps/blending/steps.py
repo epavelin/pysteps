@@ -2184,7 +2184,12 @@ class StepsBlendingNowcaster:
                     compact_output=True,
                 )["cascade_levels"]
                 for i in range(self.__config.n_cascade_levels):
-                    noise_extrapolated_decomp[i] *= self.__params.noise_std_coeffs[i]
+                    if self.__params.noise_std_coeffs is not None:
+                        noise_extrapolated_decomp[i] *= self.__params.noise_std_coeffs[
+                            i
+                        ]
+                    else:
+                        noise_extrapolated_decomp[i] = 0
 
                 # Append the results to the output lists
                 worker_state.precip_extrapolated_decomp.append(
@@ -3274,6 +3279,9 @@ def calculate_weights_bps(correlations):
     # NWP model or ensemble member, no blending of multiple models has to take
     # place
     else:
+        # Fix area outside radar coverage to 100% NWP
+        # correlations[:] = 1.0
+
         noise_weight = 1.0 - correlations
         weights = np.concatenate((correlations, noise_weight), axis=0)
 
@@ -3353,6 +3361,9 @@ def calculate_weights_spn(correlations, covariance):
     # NWP model or ensemble member, no blending of multiple models has to take
     # place
     else:
+        # Fix area outside radar coverage to 100% NWP
+        # correlations[:] = 1.0
+
         noise_weight = 1.0 - correlations
         weights = np.concatenate((correlations, noise_weight), axis=0)
 
