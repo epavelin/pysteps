@@ -677,6 +677,39 @@ def fss_compute(fss):
     return 1.0 - numer / denom
 
 
+def pfss(X_f, X_o, thr, scale):
+    """
+    Compute the probabilistic fractions skill score (pFSS) for an ensemble
+    forecast field and the corresponding observation field.
+
+    Parameters
+    ----------
+    X_f: array_like
+        Array of shape (l, m, n) containing the forecast fields.
+    X_o: array_like
+        Array of shape (m, n) containing the observation field.
+    thr: float
+        The intensity threshold.
+    scale: int
+        The spatial scale in pixels. In practice, the scale represents the size
+        of the moving window that it is used to compute the fraction of pixels
+        above the threshold.
+
+    Returns
+    -------
+    out: float
+        The fractions skill score between 0 and 1.
+
+    References
+    ----------
+    :cite:`Schwartz2010`, :cite:`Necker2024`
+    """
+
+    fss = fss_init(thr, scale)
+    pfss_accum(fss, X_f, X_o)
+    return fss_compute(fss)
+
+
 def _wavelet_decomp(X, w):
     c = pywt.wavedec2(X, w)
 
