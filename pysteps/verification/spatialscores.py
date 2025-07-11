@@ -710,6 +710,69 @@ def pfss(X_f, X_o, thr, scale):
     return fss_compute(fss)
 
 
+def pfss_accum(fss, X_f, X_o):
+    """Accumulate forecast-observation pairs to an FSS object
+    using ensemble fields.
+
+    Parameters
+    -----------
+    fss: dict
+        The FSS object initialized with
+        :py:func:`pysteps.verification.spatialscores.fss_init`.
+    X_f: array_like
+        Array of shape (l, m, n) containing the forecast fields.
+    X_o: array_like
+        Array of shape (m, n) containing the observation field.
+    """
+    if len(X_f.shape) != 3:
+        message = "X_f must be a three-dimensional array"
+        raise ValueError(message)
+
+    if len(X_o.shape) != 2:
+        message = "X_o must be a two-dimensional array"
+        raise ValueError(message)
+
+    if X_f.shape[1:] != X_o.shape:
+        message = "X_f and X_o must have the same m x n dimensions"
+        raise ValueError(message)
+
+    n_members = X_f.shape[0]
+
+    X_f = X_f.copy()
+    X_f[~np.isfinite(X_f)] = fss["thr"] - 1
+    X_o = X_o.copy()
+    X_o[~np.isfinite(X_o)] = fss["thr"] - 1
+
+    # Convert to binary fields with the given intensity threshold
+    I_f = (X_f >= fss["thr"]).astype(float)
+    I_o = (X_o >= fss["thr"]).astype(float)
+
+    S_f = 0
+    S_o = 0
+
+    # Compute fractions of pixels above the threshold within a square
+    # neighboring area by applying a 2D moving average to the binary fields.
+
+    # Compute S_f for ensemble after Eq. 7 of Necker et al. (2024).
+    for n in range(n_members):
+        if fss["scale"] > 1:
+            S_f += uniform_filter(I_f[n,:,:], size=fss["scale"], mode="constant", cval=0.0)
+        else:
+            S_f += I_f[n,:,:]
+
+    S_f = S_f / n_members
+
+    # Compute S_o as for normal FSS
+    if fss["scale"] > 1:
+        S_o = uniform_filter(I_o, size=fss["scale"], mode="constant", cval=0.0)
+    else:
+        S_o = I_o
+
+    fss["sum_obs_sq"] += np.nansum(S_o**2)
+    fss["sum_fct_obs"] += np.nansum(S_f * S_o)
+    fss["sum_fct_sq"] += np.nansum(S_f**2)
+
+
 def _wavelet_decomp(X, w):
     c = pywt.wavedec2(X, w)
 
