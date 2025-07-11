@@ -23,6 +23,8 @@ Skill scores for spatial forecasts.
     fss_accum
     fss_merge
     fss_compute
+    pfss
+    pfss_accum
 """
 
 import collections

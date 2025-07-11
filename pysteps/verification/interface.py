@@ -237,6 +237,7 @@ def get_method(name, type="deterministic"):
 
     elif type == "probabilistic":
         from .probscores import CRPS, reldiag, ROC_curve
+        from .spatialscores import pfss
 
         if name == "crps":
             return CRPS
@@ -244,6 +245,8 @@ def get_method(name, type="deterministic"):
             return reldiag
         elif name == "roc":
             return ROC_curve
+        elif name == "pfss":
+            return pfss
         else:
             raise ValueError("unknown probabilistic method %s" % name)
 
