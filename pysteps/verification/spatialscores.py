@@ -714,7 +714,7 @@ def pfss(X_f, X_o, thr, scale):
 
 def pfss_accum(fss, X_f, X_o):
     """Accumulate forecast-observation pairs to an FSS object
-    using ensemble fields.
+    using ensemble fields for pFSS calculation.
 
     Parameters
     -----------
