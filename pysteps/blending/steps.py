@@ -2184,7 +2184,7 @@ class StepsBlendingNowcaster:
                     compact_output=True,
                 )["cascade_levels"]
                 for i in range(self.__config.n_cascade_levels):
-                    noise_extrapolated_decomp[i] *= self.__params.noise_std_coeffs[
+                    noise_extrapolated_decomp[i] *= self.__params.noise_std_coeffs[i]
 
                 # Append the results to the output lists
                 worker_state.precip_extrapolated_decomp.append(
