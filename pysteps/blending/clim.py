@@ -43,11 +43,9 @@ def get_default_skill(n_cascade_levels=6, n_models=1):
 
     """
 
-    # default_skill = np.array(
-    #    [0.848, 0.537, 0.237, 0.065, 0.020, 0.0044, 0.0052, 0.0040]
-    # )
-    default_skill = np.array([1, 1, 1, 1, 1, 1, 1, 1])
-
+    default_skill = np.array(
+        [0.848, 0.537, 0.237, 0.065, 0.020, 0.0044, 0.0052, 0.0040]
+    )
     n_skill = default_skill.shape[0]
     if n_cascade_levels < n_skill:
         default_skill = default_skill[0:n_cascade_levels]
