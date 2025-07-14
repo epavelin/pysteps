@@ -758,9 +758,11 @@ def pfss_accum(fss, X_f, X_o):
     # Compute S_f for ensemble after Eq. 7 of Necker et al. (2024).
     for n in range(n_members):
         if fss["scale"] > 1:
-            S_f += uniform_filter(I_f[n,:,:], size=fss["scale"], mode="constant", cval=0.0)
+            S_f += uniform_filter(
+                I_f[n, :, :], size=fss["scale"], mode="constant", cval=0.0
+            )
         else:
-            S_f += I_f[n,:,:]
+            S_f += I_f[n, :, :]
 
     S_f = S_f / n_members
 
